@@ -1,8 +1,10 @@
 package com.sec.eventify.service;
 
+import com.sec.eventify.exception.UsernameAlreadyExistsException;
 import com.sec.eventify.model.User;
 import com.sec.eventify.model.enums.UserRole;
 import com.sec.eventify.repository.UserRespository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,28 +12,37 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRespository userRepository;
-
+    private final UserRespository userRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User register(User user) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new UsernameAlreadyExistsException("Email déjà utilisé : " + user.getEmail());
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(UserRole.ROLE_USER);
         return userRepository.save(user);
     }
 
     @Override
-    public User changeRole(Long id, String newRole) {
-        User u = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User changeRole(Long userId, String newRole) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
-        u.setRole(UserRole.valueOf(newRole));
-        return userRepository.save(u);
+        try {
+            user.setRole(UserRole.valueOf(newRole));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Rôle invalide : " + newRole);
+        }
+
+        return userRepository.save(user);
     }
 
     @Override
@@ -40,8 +51,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
-
 }
