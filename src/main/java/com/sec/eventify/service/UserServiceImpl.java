@@ -1,5 +1,6 @@
 package com.sec.eventify.service;
 
+import com.sec.eventify.config.PasswordEncoderConfig;
 import com.sec.eventify.exception.UsernameAlreadyExistsException;
 import com.sec.eventify.model.User;
 import com.sec.eventify.model.enums.UserRole;
@@ -18,7 +19,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRespository userRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoderConfig passwordEncoder;
 
     @Override
     public User register(User user) {
@@ -26,8 +27,8 @@ public class UserServiceImpl implements UserService {
             throw new UsernameAlreadyExistsException("Email déjà utilisé : " + user.getEmail());
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(UserRole.ROLE_USER);
+        user.setPassword(passwordEncoder.passwordEncoder().encode(user.getPassword()));
+        user.setRole(user.getRole());
         return userRepository.save(user);
     }
 
