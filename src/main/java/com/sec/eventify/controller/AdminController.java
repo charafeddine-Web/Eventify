@@ -3,6 +3,7 @@ package com.sec.eventify.controller;
 import com.sec.eventify.model.User;
 import com.sec.eventify.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
-
+    @Autowired
     private final UserService userService;
 
     @GetMapping("/users")

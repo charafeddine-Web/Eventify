@@ -16,9 +16,9 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private final UserRespository userRepository;
+    private UserRespository userRepository;
     @Autowired
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public User register(User user) {

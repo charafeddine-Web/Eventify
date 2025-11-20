@@ -19,11 +19,11 @@ import java.util.List;
 public class RegistrationServiceImpl implements RegistrationService {
 
     @Autowired
-    private final UserRespository userRepository;
+    private UserRespository userRepository;
     @Autowired
-    private final EventRepository eventRepository;
+    private EventRepository eventRepository;
     @Autowired
-    private final RegistrationRepository registrationRepository;
+    private RegistrationRepository registrationRepository;
 
     @Override
     public Registration registerEvent(Long eventId, String userEmail) {

@@ -21,16 +21,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // Désactiver CSRF pour API stateless
                 .csrf(csrf -> csrf.disable())
 
-                // Pas de session → API stateless
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Custom Authentication Provider
                 .authenticationProvider(customAuthenticationProvider)
 
-                // Autorisations par rôle
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/user/**").hasRole("USER")
@@ -39,7 +35,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // Basic Auth
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();

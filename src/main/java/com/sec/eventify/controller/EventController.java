@@ -1,22 +1,32 @@
 package com.sec.eventify.controller;
 
 import com.sec.eventify.model.Event;
-import com.sec.eventify.repository.EventRepository;
+import com.sec.eventify.service.EventService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/public/events")
+@RequestMapping("/api/organizer/events")
 @RequiredArgsConstructor
 public class EventController {
-    private final EventRepository repo;
+    @Autowired
+    private final EventService eventService;
 
-    @GetMapping
-    public List<Event> all() {
-        return repo.findAll();
+    @PostMapping
+    public Event create(@RequestBody Event event) {
+        return eventService.saveEvent(event);
     }
+
+    @PutMapping("/{id}")
+    public Event update(@PathVariable Long id, @RequestBody Event event) {
+        event.setId(id);
+        return eventService.upadteEvent(event);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        eventService.deleteEvent(id);
+    }
+
 }
