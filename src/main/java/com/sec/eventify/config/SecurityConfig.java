@@ -1,34 +1,24 @@
 package com.sec.eventify.config;
 
 import com.sec.eventify.security.CustomAuthenticationProvider;
-import com.sec.eventify.security.CustomAuthEntryPoint;
-import com.sec.eventify.security.CustomAccessDeniedHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomAuthenticationProvider authenticationProvider;
-    private final CustomAuthEntryPoint authEntryPoint;
-    private final CustomAccessDeniedHandler accessDeniedHandler;
-
-    public SecurityConfig(CustomAuthenticationProvider authenticationProvider,
-                          CustomAuthEntryPoint authEntryPoint,
-                          CustomAccessDeniedHandler accessDeniedHandler) {
-        this.authenticationProvider = authenticationProvider;
-        this.authEntryPoint = authEntryPoint;
-        this.accessDeniedHandler = accessDeniedHandler;
-    }
+    private final CustomAuthenticationProvider customAuthenticationProvider;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 // Désactiver CSRF pour API stateless
@@ -37,14 +27,8 @@ public class SecurityConfig {
                 // Pas de session → API stateless
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Handlers pour 401 et 403
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
-                )
-
                 // Custom Authentication Provider
-                .authenticationProvider(authenticationProvider)
+                .authenticationProvider(customAuthenticationProvider)
 
                 // Autorisations par rôle
                 .authorizeHttpRequests(auth -> auth
@@ -59,5 +43,10 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
