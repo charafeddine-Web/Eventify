@@ -32,9 +32,9 @@ public class AdviceController {
     public ErrorResponse handle(UsernameAlreadyExistsException ex, HttpServletRequest req) {
         return build(HttpStatus.CONFLICT, ex.getMessage(), req);
     }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ErrorResponse handle(RuntimeException ex, HttpServletRequest req) {
-        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
-    }
+//
+//    @ExceptionHandler(RuntimeException.class)
+//    public ErrorResponse handle(RuntimeException ex, HttpServletRequest req) {
+//        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
+//    }
 }

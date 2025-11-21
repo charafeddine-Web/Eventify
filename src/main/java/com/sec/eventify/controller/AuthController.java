@@ -20,7 +20,6 @@ public class AuthController {
 
     @PostMapping("/users")
     public User register(@RequestBody User user) {
-
         return userService.register(user);
     }
 }
