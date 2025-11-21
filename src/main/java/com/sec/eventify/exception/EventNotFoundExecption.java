@@ -1,7 +1,7 @@
 package com.sec.eventify.exception;
 
-public class EventNotFoundExecption extends RuntimeException {
-    public EventNotFoundExecption(String message) {
+public class EventNotFoundException extends RuntimeException {
+    public EventNotFoundException(String message) {
         super(message);
     }
 }
