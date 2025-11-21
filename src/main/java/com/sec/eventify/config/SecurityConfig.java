@@ -1,5 +1,7 @@
 package com.sec.eventify.config;
 
+import com.sec.eventify.security.BasicAccessDeniedHandler;
+import com.sec.eventify.security.BasicAuthEntryPoint;
 import com.sec.eventify.security.CustomAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
+    private final BasicAuthEntryPoint basicAuthEntryPoint;
+    private final BasicAccessDeniedHandler basicAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -26,6 +30,11 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authenticationProvider(customAuthenticationProvider)
+
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(basicAuthEntryPoint)
+                        .accessDeniedHandler(basicAccessDeniedHandler)
+                )
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/public/**").permitAll()
