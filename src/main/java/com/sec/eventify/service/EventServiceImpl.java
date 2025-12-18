@@ -1,5 +1,6 @@
 package com.sec.eventify.service;
 
+import com.sec.eventify.exception.UnauthorizedActionException;
 import com.sec.eventify.model.Event;
 import com.sec.eventify.model.User;
 import com.sec.eventify.model.enums.UserRole;
@@ -33,7 +34,7 @@ public class EventServiceImpl  implements EventService {
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
         if (!existing.getOrganizer().getId().equals(organizer.getId())) {
-            throw new RuntimeException("You can only update your own events");
+            throw new UnauthorizedActionException("You can only update your own events");
         }
 
         return eventRepository.save(event);
